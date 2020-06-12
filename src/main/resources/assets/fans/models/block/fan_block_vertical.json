@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/orientable_vertical",
+  "textures": {
+    "front": "fans:block/fan_front",
+    "side": "fans:block/fan_side"
+  }
+}
