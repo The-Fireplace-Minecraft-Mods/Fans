@@ -4,14 +4,12 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -33,8 +31,19 @@ public class FanBlock extends BlockWithEntity {
             return ActionResult.SUCCESS;
         } else {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof FanBlockEntity)
-                player.openHandledScreen((FanBlockEntity)blockEntity);
+            if (blockEntity instanceof FanBlockEntity) {
+                FanBlockEntity fbe = (FanBlockEntity)blockEntity;
+                //player.openHandledScreen(fbe);
+                if(!fbe.isEmpty()) {
+                    ItemScatterer.spawn(world, pos.offset(state.get(FACING)), fbe);
+                    fbe.setStack(0, ItemStack.EMPTY);
+                    //world.spawnEntity(new ItemEntity(EntityType.ITEM, world, ));
+                } else if(!player.getStackInHand(hand).isEmpty()) {
+                    fbe.setStack(0, player.getStackInHand(hand).split(1));
+                    if(player.getStackInHand(hand).isEmpty())
+                        player.setStackInHand(hand, ItemStack.EMPTY);
+                }
+            }
 
             return ActionResult.CONSUME;
         }
